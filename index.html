@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shrutika Ingole</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg:       #f2f0eb;
+      --paper:    #faf9f6;
+      --ink:      #18171a;
+      --ink-2:    #2e2c30;
+      --muted:    #706b66;
+      --border:   #dcd8d0;
+      --accent:   #7a5c40;       /* cognac — warm, mature */
+      --accent-lt:#ede3d8;
+      --accent-dk:#5a3f28;
+      --stone:    #b0a898;
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: var(--ink);
+      line-height: 1.7;
+      background-image: radial-gradient(var(--border) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+
+    /* ── FADE-IN ANIMATION ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 3rem;
+      background: rgba(242, 240, 235, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow 0.3s;
+    }
+
+    nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.06); }
+
+    .logo {
+      font-family: 'Caveat', cursive;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    nav ul { list-style: none; display: flex; gap: 2.5rem; }
+
+    nav ul li a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      position: relative;
+      transition: color 0.2s;
+    }
+
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+
+    nav ul li a:hover { color: var(--accent); }
+    nav ul li a:hover::after { width: 100%; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 960px; margin: 0 auto; padding: 0 2.5rem; }
+    section { padding: 5.5rem 0; }
+
+    .eyebrow {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      margin-bottom: 3rem;
+      line-height: 1.2;
+    }
+
+    .section-title em {
+      font-family: 'Caveat', cursive;
+      font-style: normal;
+      font-size: 1.1em;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    hr.rule { border: none; border-top: 1px solid var(--border); }
+
+    /* ── HERO ── */
+    #hero { padding: 8rem 0 5rem; }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .hero-badges {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.6rem;
+    }
+
+    .badge {
+      font-size: 0.73rem;
+      font-weight: 500;
+      padding: 0.22rem 0.8rem;
+      border-radius: 20px;
+      border: 1px solid;
+      letter-spacing: 0.03em;
+      transition: transform 0.2s;
+    }
+
+    .badge:hover { transform: translateY(-1px); }
+
+    .b-cognac { background: var(--accent-lt); border-color: #b89070; color: var(--accent-dk); }
+    .b-slate  { background: #e4e9f0; border-color: #9aaac0; color: #334466; }
+    .b-sage   { background: #e5ede8; border-color: #90b89a; color: #2a5538; }
+
+    #hero h1 {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(3.5rem, 8vw, 6rem);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.0;
+      margin-bottom: 1.3rem;
+    }
+
+    #hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: 1.02rem;
+      color: var(--muted);
+      max-width: 480px;
+      line-height: 1.8;
+      margin-bottom: 2.2rem;
+      font-weight: 300;
+    }
+
+    .btn-row { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
+
+    .btn-dark {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.72rem 1.5rem;
+      background: var(--ink-2);
+      color: #f5f3ef;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      border-radius: 4px;
+      border: 1px solid var(--ink-2);
+      letter-spacing: 0.02em;
+      transition: background 0.25s, border-color 0.25s, transform 0.2s;
+    }
+
+    .btn-dark:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.72rem 1.3rem;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      border-radius: 4px;
+      transition: border-color 0.25s, color 0.25s, transform 0.2s;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    /* hero stat cards */
+    .stat-stack { display: flex; flex-direction: column; gap: 0.8rem; }
+
+    .stat-card {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.2rem;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+
+    .stat-card:hover {
+      border-color: var(--accent);
+      transform: translateX(-3px);
+    }
+
+    .stat-num {
+      font-family: 'Caveat', cursive;
+      font-size: 1.8rem;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.2rem;
+    }
+
+    .stat-label { font-size: 0.76rem; color: var(--muted); line-height: 1.4; }
+
+    /* ── ABOUT ── */
+    #about { background: var(--paper); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .about-text p {
+      color: var(--muted);
+      font-weight: 300;
+      margin-bottom: 1.1rem;
+      font-size: 1.01rem;
+    }
+
+    .about-text p:last-child { margin-bottom: 0; }
+    .about-text strong { color: var(--ink); font-weight: 500; }
+
+    .hl { background: linear-gradient(transparent 55%, #e8d9c2 55%); padding: 0 2px; }
+
+    .facts-list { display: flex; flex-direction: column; gap: 0; }
+
+    .fact-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+
+    .fact-row:first-child { padding-top: 0; }
+    .fact-row:last-child  { border-bottom: none; }
+
+    .fact-icon {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-lt);
+      border-radius: 6px;
+      flex-shrink: 0;
+      color: var(--accent);
+      font-size: 0.75rem;
+      margin-top: 2px;
+    }
+
+    .fact-body strong { display: block; font-size: 0.88rem; font-weight: 500; color: var(--ink); }
+    .fact-body span   { font-size: 0.82rem; color: var(--muted); }
+
+    /* ── EXPERIENCE ── */
+    .timeline { display: flex; flex-direction: column; }
+
+    .exp-row {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 2.5rem;
+      padding: 2.2rem 0;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+
+    .exp-row:last-child { border-bottom: none; }
+
+    .exp-meta { padding-top: 3px; }
+
+    .exp-date {
+      font-size: 0.78rem;
+      color: var(--stone);
+      line-height: 1.5;
+    }
+
+    .exp-city {
+      font-family: 'Caveat', cursive;
+      font-size: 1.05rem;
+      color: var(--accent);
+      margin-top: 0.1rem;
+    }
+
+    .exp-body h3 {
+      font-size: 0.98rem;
+      font-weight: 500;
+      margin-bottom: 0.15rem;
+      line-height: 1.4;
+    }
+
+    .exp-role {
+      font-size: 0.8rem;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .exp-body ul {
+      padding-left: 1rem;
+      font-size: 0.88rem;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    .exp-body ul li { margin-bottom: 0.25rem; }
+
+    /* ── PROJECTS ── */
+    #projects { background: var(--paper); }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.2rem;
+    }
+
+    .p-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.6rem;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+      cursor: default;
+    }
+
+    .p-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 0;
+      background: var(--accent);
+      transition: height 0.35s ease;
+    }
+
+    .p-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 28px rgba(122, 92, 64, 0.1);
+      transform: translateY(-3px);
+    }
+
+    .p-card:hover::before { height: 100%; }
+
+    .p-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.9rem;
+    }
+
+    .p-icon {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--accent-lt);
+      border-radius: 8px;
+      color: var(--accent);
+      font-size: 0.95rem;
+    }
+
+    .p-status {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.18rem 0.55rem;
+      border-radius: 20px;
+      border: 1px solid;
+    }
+
+    .s-ongoing { color: #2a6640; background: #dff0e6; border-color: #90c8a8; }
+    .s-done    { color: var(--muted); background: var(--bg); border-color: var(--border); }
+
+    .p-card h3 {
+      font-size: 0.96rem;
+      font-weight: 500;
+      line-height: 1.4;
+      margin-bottom: 0.55rem;
+    }
+
+    .p-card p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      font-weight: 300;
+      line-height: 1.65;
+    }
+
+    .chip-row { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 1rem; }
+
+    .chip {
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 0.15rem 0.6rem;
+      border-radius: 20px;
+      border: 1px solid;
+      letter-spacing: 0.03em;
+    }
+
+    .c-cognac { background: var(--accent-lt); border-color: #b89070; color: var(--accent-dk); }
+    .c-slate  { background: #e4e9f0; border-color: #9aaac0; color: #334466; }
+    .c-sage   { background: #e5ede8; border-color: #90b89a; color: #2a5538; }
+    .c-rust   { background: #f0e6e0; border-color: #c09080; color: #7a3820; }
+
+    /* ── SKILLS ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 1rem;
+    }
+
+    .skill-group {
+      padding: 1.3rem 1.4rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--paper);
+      transition: border-color 0.25s, transform 0.25s;
+    }
+
+    .skill-group:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .skill-group h4 {
+      font-size: 0.73rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .skill-group ul { list-style: none; font-size: 0.87rem; color: var(--muted); line-height: 2; font-weight: 300; }
+
+    /* ── CONTACT ── */
+    #contact {
+      background: var(--ink-2);
+      background-image: none;
+      padding: 6rem 0;
+    }
+
+    #contact .eyebrow { color: var(--stone); }
+
+    #contact .section-title { color: #f0ede8; margin-bottom: 0.8rem; }
+
+    #contact > .container > p {
+      color: var(--stone);
+      font-weight: 300;
+      max-width: 440px;
+      margin-bottom: 2.5rem;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .contact-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.1rem 1.3rem;
+      border: 1px solid #3a3830;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #c0b8b0;
+      background: rgba(255,255,255,0.03);
+      transition: border-color 0.25s, color 0.25s, background 0.25s, transform 0.25s;
+    }
+
+    .contact-card:hover {
+      border-color: var(--accent);
+      color: #f0ede8;
+      background: rgba(122, 92, 64, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .contact-card .c-icon {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.06);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+      transition: background 0.25s;
+    }
+
+    .contact-card:hover .c-icon { background: rgba(122, 92, 64, 0.3); }
+
+    .contact-card .c-text strong { display: block; font-size: 0.8rem; font-weight: 500; color: #f0ede8; }
+    .contact-card .c-text span   { font-size: 0.73rem; color: var(--stone); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      text-align: center;
+      padding: 1.6rem;
+      border-top: 1px solid #28262a;
+      color: #444248;
+      font-size: 0.8rem;
+    }
+
+    footer a { color: #666462; text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: var(--stone); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      nav { padding: 1rem 1.5rem; }
+      nav ul { gap: 1.2rem; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .stat-stack { flex-direction: row; flex-wrap: wrap; }
+      .stat-card { flex: 1; min-width: 120px; }
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .project-grid { grid-template-columns: 1fr; }
+      .exp-row { grid-template-columns: 1fr; gap: 0.3rem; }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="logo">S. Ingole</div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="container">
+      <div class="hero-grid">
+
+        <div>
+          <div class="hero-badges reveal">
+            <span class="badge b-cognac">B.Tech Mechanical · SVNIT</span>
+            <span class="badge b-slate">B.S Electronic Systems · IITM</span>
+            <span class="badge b-sage"><i class="fa-solid fa-music"></i> &nbsp;Sangeet Visharad</span>
+          </div>
+          <h1 class="reveal reveal-delay-1">Shrutika<br/><em>Ingole.</em></h1>
+          <p class="hero-sub reveal reveal-delay-2">
+            Aerospace engineering meets machine learning meets embedded systems.
+            I work at intersections — building things that don't fit neatly into one field.
+          </p>
+          <div class="btn-row reveal reveal-delay-3">
+            <a href="#projects" class="btn-dark">
+              <i class="fa-solid fa-arrow-down"></i> View Projects
+            </a>
+            <a href="mailto:shrutikaingole30@gmail.com" class="btn-ghost">
+              <i class="fa-regular fa-envelope"></i> Get in touch
+            </a>
+          </div>
+        </div>
+
+        <div class="stat-stack reveal reveal-delay-2">
+          <div class="stat-card">
+            <div class="stat-num">2</div>
+            <div class="stat-label">Degrees in parallel<br/>SVNIT + IIT Madras</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">3</div>
+            <div class="stat-label">Aerospace internships<br/>Godrej · HAL · QAC</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">8.03</div>
+            <div class="stat-label">CGPA · B.Tech<br/>Mechanical Engineering</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <div class="eyebrow reveal">Who I am</div>
+      <div class="section-title reveal">About <em>me</em></div>
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <p>
+            I'm pursuing two degrees simultaneously — a <strong>B.Tech in Mechanical Engineering
+            at SVNIT Surat</strong> and a <strong>B.S in Electronic Systems at IIT Madras</strong>.
+            My work sits at the overlap of aerospace materials, computational modeling, and intelligent systems.
+          </p>
+          <p>
+            On the engineering side, I've done hands-on work in quality control and NDT at
+            <strong>Godrej Aerospace</strong> and <strong>HAL</strong> — studying how aerospace-grade
+            titanium behaves under load and how manufacturing constraints shape real components.
+          </p>
+          <p>
+            On the computational side, I build things: ML pipelines that predict weld properties
+            from images, Python-based flow solvers, real-time tracking robots. I like problems
+            that need both domain knowledge and software to solve.
+          </p>
+          <p>
+            Outside engineering — I'm a <span class="hl">certified Sangeet Visharad</span>,
+            a Bachelor's in Hindustani Classical Music. Ragas are just another kind of system.
+          </p>
+        </div>
+
+        <div class="facts-list reveal reveal-delay-1">
+          <div class="fact-row">
+            <div class="fact-icon"><i class="fa-solid fa-trophy"></i></div>
+            <div class="fact-body">
+              <strong>NTSE Scholar</strong>
+              <span>NCERT, Govt. of India — 2021</span>
+            </div>
+          </div>
+          <div class="fact-row">
+            <div class="fact-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div class="fact-body">
+              <strong>ML Specialization</strong>
+              <span>Stanford University & DeepLearning.ai — 2026</span>
+            </div>
+          </div>
+          <div class="fact-row">
+            <div class="fact-icon"><i class="fa-solid fa-music"></i></div>
+            <div class="fact-body">
+              <strong>Sangeet Visharad</strong>
+              <span>Hindustani Classical Music — 2024</span>
+            </div>
+          </div>
+          <div class="fact-row">
+            <div class="fact-icon"><i class="fa-solid fa-location-dot"></i></div>
+            <div class="fact-body">
+              <strong>Based in</strong>
+              <span>Surat (SVNIT) &amp; Chennai (IITM)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="container">
+      <div class="eyebrow reveal">Where I've worked</div>
+      <div class="section-title reveal">Experience</div>
+      <div class="timeline">
+
+        <div class="exp-row reveal">
+          <div class="exp-meta">
+            <div class="exp-date">Jun – Jul 2025</div>
+            <div class="exp-city">Mumbai</div>
+          </div>
+          <div class="exp-body">
+            <h3>Godrej Aerospace — Quality Control Department</h3>
+            <div class="exp-role"><i class="fa-regular fa-circle-dot"></i> Student Intern</div>
+            <ul>
+              <li>Time-study and workflow analysis for metallographic inspection of aerospace-grade titanium; identified bottlenecks and proposed batching strategies to improve throughput.</li>
+              <li>Mechanical testing (tensile, hardness, impact) against aerospace structural requirements.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="exp-row reveal">
+          <div class="exp-meta">
+            <div class="exp-date">May 2024</div>
+            <div class="exp-city">Nashik</div>
+          </div>
+          <div class="exp-body">
+            <h3>Hindustan Aeronautics Limited — Central Laboratory</h3>
+            <div class="exp-role"><i class="fa-regular fa-circle-dot"></i> Student Intern</div>
+            <ul>
+              <li>NDT and chemical validation protocols for aerospace component qualification.</li>
+              <li>Analyzed heat treatment effects on microstructure and resulting mechanical properties.</li>
+              <li>Examined quality checkpoints across electroplating and assembly processes.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="exp-row reveal">
+          <div class="exp-meta">
+            <div class="exp-date">Apr 2024</div>
+            <div class="exp-city">Pune</div>
+          </div>
+          <div class="exp-body">
+            <h3>Quality Auto Components Pvt. Ltd. — Manufacturing & Heat Treatment</h3>
+            <div class="exp-role"><i class="fa-regular fa-circle-dot"></i> Student Intern</div>
+            <ul>
+              <li>Analyzed hot and cold die forging for high-strength components.</li>
+              <li>Studied heat treatment operations (normalizing, tempering, hardening) and their impact on mechanical properties.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="container">
+      <div class="eyebrow reveal">Things I've built</div>
+      <div class="section-title reveal">Projects</div>
+      <div class="project-grid">
+
+        <div class="p-card reveal">
+          <div class="p-top">
+            <div class="p-icon"><i class="fa-solid fa-microscope"></i></div>
+            <span class="p-status s-ongoing">Ongoing</span>
+          </div>
+          <h3>Vision-Based Mechanical Property Prediction in Friction Stir Welding</h3>
+          <p>ML pipeline predicting tensile strength and hardness from weld surface images — enabling non-destructive property estimation via automated defect segmentation.</p>
+          <div class="chip-row">
+            <span class="chip c-slate">Python</span>
+            <span class="chip c-slate">Computer Vision</span>
+            <span class="chip c-slate">ML</span>
+          </div>
+        </div>
+
+        <div class="p-card reveal reveal-delay-1">
+          <div class="p-top">
+            <div class="p-icon"><i class="fa-solid fa-wave-square"></i></div>
+            <span class="p-status s-ongoing">Ongoing</span>
+          </div>
+          <h3>Dynamic Modeling & Stability Analysis — 2nd-Order Mechanical System</h3>
+          <p>State-space model of a mass–spring–damper system with Python ODE solvers. Eigenvalue stability analysis, step response simulation, and phase portraits.</p>
+          <div class="chip-row">
+            <span class="chip c-sage">Python</span>
+            <span class="chip c-sage">ODE Solvers</span>
+            <span class="chip c-sage">Control Theory</span>
+          </div>
+        </div>
+
+        <div class="p-card reveal reveal-delay-2">
+          <div class="p-top">
+            <div class="p-icon"><i class="fa-solid fa-wind"></i></div>
+            <span class="p-status s-done">2026</span>
+          </div>
+          <h3>Compressible Flow Analysis — Converging–Diverging Nozzle</h3>
+          <p>Isentropic flow model in Python with iterative solvers for the nonlinear Area–Mach relation. Analyzed choking and back-pressure effects; validated against analytical solutions.</p>
+          <div class="chip-row">
+            <span class="chip c-cognac">Python</span>
+            <span class="chip c-cognac">CFD</span>
+            <span class="chip c-cognac">Numerical Methods</span>
+          </div>
+        </div>
+
+        <div class="p-card reveal reveal-delay-3">
+          <div class="p-top">
+            <div class="p-icon"><i class="fa-solid fa-robot"></i></div>
+            <span class="p-status s-done">2024</span>
+          </div>
+          <h3>Object Following Bot</h3>
+          <p>Real-time tracking robot using YOLOv8 for detection, Arduino for embedded motor control, and serial communication for a closed-loop system evaluated under dynamic conditions.</p>
+          <div class="chip-row">
+            <span class="chip c-rust">YOLOv8</span>
+            <span class="chip c-rust">Arduino</span>
+            <span class="chip c-rust">OpenCV</span>
+            <span class="chip c-rust">Embedded</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="container">
+      <div class="eyebrow reveal">Tools & Technologies</div>
+      <div class="section-title reveal">Skills</div>
+      <div class="skills-grid">
+        <div class="skill-group reveal">
+          <h4><i class="fa-solid fa-code"></i> Programming</h4>
+          <ul>
+            <li>Python (NumPy, Matplotlib)</li>
+            <li>MATLAB</li>
+            <li>C</li>
+          </ul>
+        </div>
+        <div class="skill-group reveal reveal-delay-1">
+          <h4><i class="fa-solid fa-drafting-compass"></i> Mechanical Design</h4>
+          <ul>
+            <li>SolidWorks</li>
+            <li>AutoCAD</li>
+            <li>Metrology</li>
+            <li>Process Analysis</li>
+          </ul>
+        </div>
+        <div class="skill-group reveal reveal-delay-2">
+          <h4><i class="fa-solid fa-tornado"></i> Simulation & CFD</h4>
+          <ul>
+            <li>Flow Modeling</li>
+            <li>ANSYS (Fundamentals)</li>
+            <li>Numerical Methods</li>
+          </ul>
+        </div>
+        <div class="skill-group reveal reveal-delay-3">
+          <h4><i class="fa-solid fa-microchip"></i> Embedded & CV</h4>
+          <ul>
+            <li>STM32 / Arduino</li>
+            <li>OpenCV</li>
+            <li>Serial Protocols</li>
+          </ul>
+        </div>
+        <div class="skill-group reveal reveal-delay-4">
+          <h4><i class="fa-solid fa-plane-up"></i> Aerospace & Testing</h4>
+          <ul>
+            <li>NDT Methods</li>
+            <li>Mechanical Testing</li>
+            <li>Heat Treatment</li>
+            <li>Metallographic Inspection</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="container">
+      <div class="eyebrow reveal">Get in touch</div>
+      <div class="section-title reveal">Contact</div>
+      <p class="reveal">
+        Open to internships, research collaborations, and interesting conversations
+        about aerospace, ML, or Hindustani classical music.
+      </p>
+      <div class="contact-grid reveal">
+        <a href="mailto:shrutikaingole30@gmail.com" class="contact-card">
+          <div class="c-icon"><i class="fa-regular fa-envelope"></i></div>
+          <div class="c-text">
+            <strong>Email</strong>
+            <span>shrutikaingole30@gmail.com</span>
+          </div>
+        </a>
+        <a href="https://linkedin.com/in/shrutika-ingole1" target="_blank" class="contact-card">
+          <div class="c-icon"><i class="fa-brands fa-linkedin-in"></i></div>
+          <div class="c-text">
+            <strong>LinkedIn</strong>
+            <span>shrutika-ingole1</span>
+          </div>
+        </a>
+        <a href="https://github.com/shrutikaingole15" target="_blank" class="contact-card">
+          <div class="c-icon"><i class="fa-brands fa-github"></i></div>
+          <div class="c-text">
+            <strong>GitHub</strong>
+            <span>shrutikaingole15</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Shrutika Ingole &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; <a href="mailto:shrutikaingole30@gmail.com">shrutikaingole30@gmail.com</a></p>
+  </footer>
+
+  <script>
+    // Scroll-triggered fade-in
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Nav shadow on scroll
+    const nav = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+  </script>
+
+</body>
+</html>
