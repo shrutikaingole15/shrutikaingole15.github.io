@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shrutika Ingole — CAD & Mechanical Design</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg:       #04080f;
+      --surface:  #080d18;
+      --surface2: #0d1525;
+      --cyan:     #00c8ff;
+      --cyan-dim: rgba(0, 200, 255, 0.15);
+      --cyan-glow:rgba(0, 200, 255, 0.35);
+      --blue:     #3b82f6;
+      --text:     #e2e8f0;
+      --muted:    #64748b;
+      --border:   rgba(0, 200, 255, 0.12);
+      --border-hover: rgba(0, 200, 255, 0.45);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── CANVAS BACKGROUND ── */
+    #particle-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* everything above canvas */
+    nav, main, footer { position: relative; z-index: 1; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 3rem;
+      background: rgba(4, 8, 15, 0.75);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+
+    nav.scrolled { border-color: var(--border-hover); }
+
+    .logo {
+      font-family: 'Caveat', cursive;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: 0.02em;
+      text-shadow: 0 0 20px var(--cyan-glow);
+    }
+
+    nav ul { list-style: none; display: flex; gap: 2.5rem; }
+
+    nav ul li a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      position: relative;
+      transition: color 0.25s;
+    }
+
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--cyan);
+      box-shadow: 0 0 6px var(--cyan);
+      transition: width 0.3s ease;
+    }
+
+    nav ul li a:hover { color: var(--cyan); }
+    nav ul li a:hover::after { width: 100%; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1020px; margin: 0 auto; padding: 0 2.5rem; }
+    section { padding: 7rem 0; }
+
+    .eyebrow {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 20px; height: 1px;
+      background: var(--cyan);
+      box-shadow: 0 0 6px var(--cyan);
+    }
+
+    .section-title {
+      font-size: 2.2rem;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 3rem;
+      line-height: 1.2;
+    }
+
+    .section-title em {
+      font-family: 'Caveat', cursive;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 1.1em;
+      color: var(--cyan);
+      text-shadow: 0 0 20px var(--cyan-glow);
+    }
+
+    /* ── REVEAL ANIMATIONS ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left  { opacity: 0; transform: translateX(-28px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .d1 { transition-delay: 0.1s; }
+    .d2 { transition-delay: 0.2s; }
+    .d3 { transition-delay: 0.3s; }
+    .d4 { transition-delay: 0.4s; }
+    .d5 { transition-delay: 0.5s; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* radial glow behind hero text */
+    #hero::before {
+      content: '';
+      position: absolute;
+      top: 30%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px; height: 700px;
+      background: radial-gradient(ellipse, rgba(0,200,255,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .hero-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* blinking dot */
+    .dot {
+      width: 7px; height: 7px;
+      background: var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--cyan);
+      animation: blink 1.6s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.2; }
+    }
+
+    #hero h1 {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(4rem, 10vw, 8rem);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 0.95;
+      color: #fff;
+    }
+
+    #hero h1 em {
+      font-style: normal;
+      color: var(--cyan);
+      text-shadow: 0 0 40px var(--cyan-glow), 0 0 80px rgba(0,200,255,0.15);
+    }
+
+    .hero-role {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      margin-top: 0.8rem;
+      border-left: 2px solid var(--cyan);
+      padding-left: 1rem;
+      min-height: 1.5rem;
+    }
+
+    /* typewriter cursor */
+    #typewriter::after {
+      content: '|';
+      color: var(--cyan);
+      animation: blink 0.9s step-end infinite;
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.85;
+      font-weight: 300;
+      margin-top: 1.2rem;
+    }
+
+    .hero-sub strong { color: var(--text); font-weight: 400; }
+
+    .btn-row { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-top: 2rem; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.8rem 1.8rem;
+      background: transparent;
+      color: var(--cyan);
+      border: 1px solid var(--cyan);
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 0.88rem; font-weight: 500;
+      letter-spacing: 0.05em;
+      position: relative; overflow: hidden;
+      transition: color 0.3s, box-shadow 0.3s;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--cyan);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+      z-index: -1;
+    }
+
+    .btn-primary:hover { color: #000; box-shadow: 0 0 20px var(--cyan-glow); }
+    .btn-primary:hover::before { transform: scaleX(1); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.8rem 1.6rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--muted);
+      text-decoration: none; font-size: 0.88rem;
+      border-radius: 4px;
+      transition: border-color 0.25s, color 0.25s;
+    }
+    .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+
+    /* hero badges */
+    .hero-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1.5rem; }
+
+    .h-badge {
+      font-size: 0.72rem; font-weight: 500;
+      padding: 0.25rem 0.8rem;
+      border-radius: 2px;
+      border: 1px solid rgba(0,200,255,0.25);
+      background: rgba(0,200,255,0.06);
+      color: #94a3b8;
+      letter-spacing: 0.04em;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .h-badge:hover { border-color: var(--cyan); color: var(--cyan); }
+
+    /* scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      color: var(--muted); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+      animation: fadeDown 2s ease-in-out infinite;
+    }
+
+    .scroll-hint i { font-size: 0.8rem; }
+
+    @keyframes fadeDown {
+      0%, 100% { opacity: 0.3; transform: translateX(-50%) translateY(0); }
+      50%       { opacity: 0.8; transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ── TOOLS STRIP ── */
+    #tools {
+      padding: 1.5rem 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: rgba(8,13,24,0.8);
+      overflow: hidden;
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 1.5rem;
+      animation: marquee 18s linear infinite;
+      width: max-content;
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    .tool-pill {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.82rem; color: var(--muted); font-weight: 400;
+      padding: 0.4rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      background: rgba(0,200,255,0.03);
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .tool-pill i { color: var(--cyan); font-size: 0.8rem; }
+
+    /* ── CAD PROJECTS ── */
+    #cad-projects { background: transparent; }
+
+    .cad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+    }
+
+    .cad-card {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--surface);
+      position: relative;
+      transition: border-color 0.4s, box-shadow 0.4s, transform 0.4s;
+      cursor: default;
+    }
+
+    /* animated corner accents */
+    .cad-card::before,
+    .cad-card::after {
+      content: '';
+      position: absolute;
+      width: 12px; height: 12px;
+      border-color: var(--cyan);
+      border-style: solid;
+      opacity: 0;
+      transition: opacity 0.3s, width 0.3s, height 0.3s;
+      z-index: 2;
+    }
+    .cad-card::before { top: 0; left: 0; border-width: 1.5px 0 0 1.5px; }
+    .cad-card::after  { bottom: 0; right: 0; border-width: 0 1.5px 1.5px 0; }
+
+    .cad-card:hover::before,
+    .cad-card:hover::after { opacity: 1; width: 20px; height: 20px; }
+
+    .cad-card:hover {
+      border-color: rgba(0,200,255,0.4);
+      box-shadow: 0 0 30px rgba(0,200,255,0.08), inset 0 0 30px rgba(0,200,255,0.03);
+      transform: translateY(-4px);
+    }
+
+    /* scan line animation on hover */
+    .cad-card .scan-line {
+      position: absolute;
+      top: -100%; left: 0;
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: 0;
+      z-index: 3;
+      pointer-events: none;
+      transition: none;
+    }
+
+    .cad-card:hover .scan-line {
+      opacity: 0.7;
+      animation: scan 1.2s ease-in-out forwards;
+    }
+
+    @keyframes scan {
+      from { top: -5%; }
+      to   { top: 105%; }
+    }
+
+    .cad-thumb {
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.6rem;
+      position: relative; overflow: hidden;
+    }
+
+    /* animated ring in placeholder */
+    .cad-thumb .ring {
+      width: 50px; height: 50px;
+      border: 1px solid rgba(0,200,255,0.2);
+      border-radius: 50%;
+      position: relative;
+      animation: spin-slow 6s linear infinite;
+    }
+
+    .cad-thumb .ring::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 30%;
+      width: 8px; height: 8px;
+      background: var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--cyan);
+      transform: translateX(-50%);
+    }
+
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .cad-thumb .thumb-text {
+      font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(0,200,255,0.3);
+    }
+
+    .cad-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      position: absolute; top: 0; left: 0;
+    }
+
+    .cad-info { padding: 1.1rem 1.2rem; }
+
+    .cad-info h3 { font-size: 0.93rem; font-weight: 500; margin-bottom: 0.3rem; color: var(--text); }
+    .cad-info p  { font-size: 0.82rem; color: var(--muted); font-weight: 300; line-height: 1.55; margin-bottom: 0.8rem; }
+    .cad-info .ph { font-style: italic; color: rgba(0,200,255,0.25); }
+
+    .chip-row { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+
+    .chip {
+      font-size: 0.68rem; font-weight: 500;
+      padding: 0.12rem 0.55rem;
+      border-radius: 2px; border: 1px solid;
+      letter-spacing: 0.04em;
+    }
+    .c-cyan   { background: rgba(0,200,255,0.08); border-color: rgba(0,200,255,0.3); color: var(--cyan); }
+    .c-steel  { background: rgba(148,163,184,0.08); border-color: rgba(148,163,184,0.25); color: #94a3b8; }
+    .c-green  { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.3); color: #34d399; }
+    .c-purple { background: rgba(167,139,250,0.08); border-color: rgba(167,139,250,0.3); color: #a78bfa; }
+
+    /* ── EXPERIENCE ── */
+    #experience { background: transparent; }
+
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+
+    .exp-row {
+      display: grid;
+      grid-template-columns: 130px 1fr;
+      gap: 2.5rem;
+      padding: 2.2rem 0;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+    .exp-row:last-child { border-bottom: none; }
+
+    .exp-meta { padding-top: 3px; }
+    .exp-date { font-size: 0.77rem; color: var(--muted); line-height: 1.5; }
+    .exp-city {
+      font-family: 'Caveat', cursive;
+      font-size: 1.05rem; color: var(--cyan); margin-top: 0.2rem;
+      text-shadow: 0 0 10px var(--cyan-glow);
+    }
+
+    .exp-body h3 { font-size: 0.96rem; font-weight: 500; margin-bottom: 0.15rem; color: var(--text); }
+    .exp-role {
+      font-size: 0.79rem; color: var(--cyan); margin-bottom: 0.75rem;
+      display: flex; align-items: center; gap: 0.4rem; opacity: 0.8;
+    }
+    .exp-body ul { padding-left: 1rem; font-size: 0.87rem; color: var(--muted); font-weight: 300; }
+    .exp-body ul li { margin-bottom: 0.3rem; }
+
+    /* ── OTHER PROJECTS ── */
+    #projects { background: transparent; }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .p-card {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.5rem;
+      background: var(--surface);
+      position: relative; overflow: hidden;
+      transition: border-color 0.35s, box-shadow 0.35s, transform 0.35s;
+    }
+
+    .p-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+
+    .p-card:hover {
+      border-color: rgba(0,200,255,0.3);
+      box-shadow: 0 8px 32px rgba(0,200,255,0.07);
+      transform: translateY(-3px);
+    }
+
+    .p-card:hover::before { transform: scaleX(1); }
+
+    .p-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.9rem; }
+
+    .p-icon {
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,200,255,0.08); border-radius: 6px;
+      color: var(--cyan); font-size: 0.9rem;
+      border: 1px solid rgba(0,200,255,0.2);
+    }
+
+    .p-status {
+      font-size: 0.67rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 0.15rem 0.5rem; border-radius: 2px; border: 1px solid;
+    }
+    .s-ongoing { color: #34d399; background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.3); }
+    .s-done    { color: var(--muted); background: rgba(100,116,139,0.08); border-color: var(--border); }
+
+    .p-card h3 { font-size: 0.93rem; font-weight: 500; line-height: 1.4; margin-bottom: 0.4rem; color: var(--text); }
+    .p-card p  { font-size: 0.85rem; color: var(--muted); font-weight: 300; line-height: 1.65; }
+
+    /* ── EDUCATION TIMELINE ── */
+    #education { background: transparent; }
+
+    .edu-timeline {
+      position: relative;
+      padding-left: 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* vertical grey track */
+    .edu-track {
+      position: absolute;
+      left: 7px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: rgba(0, 200, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    /* cyan fill that grows as you scroll */
+    .edu-track-fill {
+      width: 100%;
+      height: 0%;
+      background: linear-gradient(to bottom, var(--cyan), rgba(0,200,255,0.3));
+      box-shadow: 0 0 8px var(--cyan-glow);
+      border-radius: 2px;
+      transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* each row */
+    .edu-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.8rem;
+      padding: 2rem 0;
+      position: relative;
+    }
+
+    /* dot on the track */
+    .edu-dot {
+      position: absolute;
+      left: -3rem;
+      top: 2.4rem;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .edu-dot-core {
+      width: 8px;
+      height: 8px;
+      background: rgba(0,200,255,0.25);
+      border: 1.5px solid rgba(0,200,255,0.3);
+      border-radius: 50%;
+      transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* expanding ring on activation */
+    .edu-dot-ring {
+      position: absolute;
+      width: 16px; height: 16px;
+      border: 1.5px solid rgba(0,200,255,0.2);
+      border-radius: 50%;
+      transform: scale(0.5);
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), opacity 0.4s;
+    }
+
+    /* active state — triggered by JS */
+    .edu-item.active .edu-dot-core {
+      background: var(--cyan);
+      border-color: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan), 0 0 24px var(--cyan-glow);
+    }
+
+    .edu-item.active .edu-dot-ring {
+      transform: scale(1);
+      opacity: 1;
+      animation: ring-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes ring-pulse {
+      0%, 100% { transform: scale(1);   opacity: 0.6; }
+      50%       { transform: scale(1.5); opacity: 0;   }
+    }
+
+    /* card */
+    .edu-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.4rem 1.6rem;
+      flex: 1;
+      transform: translateX(20px);
+      opacity: 0;
+      transition: transform 0.6s cubic-bezier(0.16,1,0.3,1),
+                  opacity 0.6s ease,
+                  border-color 0.4s,
+                  box-shadow 0.4s;
+    }
+
+    .edu-item.active .edu-card {
+      transform: translateX(0);
+      opacity: 1;
+      border-color: rgba(0,200,255,0.3);
+      box-shadow: 0 4px 24px rgba(0,200,255,0.07);
+    }
+
+    .edu-item.active:nth-child(2) .edu-card { transition-delay: 0.1s; }
+    .edu-item.active:nth-child(3) .edu-card { transition-delay: 0.2s; }
+    .edu-item.active:nth-child(4) .edu-card { transition-delay: 0.3s; }
+
+    .edu-year {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+      opacity: 0.8;
+    }
+
+    .edu-inst {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.35;
+      margin-bottom: 0.3rem;
+    }
+
+    .edu-degree {
+      font-size: 0.88rem;
+      color: var(--muted);
+      font-weight: 300;
+      margin-bottom: 0.4rem;
+    }
+
+    .edu-cgpa {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .edu-cgpa span {
+      font-family: 'Caveat', cursive;
+      font-size: 1.1rem;
+      color: var(--cyan);
+      font-weight: 700;
+    }
+
+    .edu-location {
+      font-size: 0.75rem;
+      color: rgba(100,116,139,0.7);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+    }
+
+    .edu-location i { color: rgba(0,200,255,0.4); font-size: 0.7rem; }
+
+    /* ── SKILLS ── */
+    #skills { background: transparent; }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .skill-group {
+      padding: 1.3rem 1.4rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+      position: relative; overflow: hidden;
+    }
+
+    .skill-group::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--cyan);
+      box-shadow: 0 0 6px var(--cyan);
+      transition: width 0.4s ease;
+    }
+
+    .skill-group:hover::after { width: 100%; }
+    .skill-group:hover { border-color: rgba(0,200,255,0.3); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,200,255,0.06); }
+    .skill-group.primary { border-color: rgba(0,200,255,0.3); }
+
+    .skill-group h4 {
+      font-size: 0.72rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--cyan); margin-bottom: 0.9rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+
+    .skill-group ul { list-style: none; font-size: 0.87rem; color: var(--muted); line-height: 2; font-weight: 300; }
+
+    .skill-group ul li::before { content: '↗ '; color: rgba(0,200,255,0.4); font-size: 0.75rem; }
+
+    /* ── CONTACT ── */
+    #contact { background: transparent; padding-bottom: 5rem; }
+
+    .contact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+
+    .contact-card {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1.2rem 1.4rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      text-decoration: none; color: var(--muted);
+      background: var(--surface);
+      transition: border-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.3s;
+      position: relative; overflow: hidden;
+    }
+
+    .contact-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0,200,255,0.05), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .contact-card:hover {
+      border-color: rgba(0,200,255,0.4);
+      color: var(--cyan);
+      box-shadow: 0 0 24px rgba(0,200,255,0.08);
+      transform: translateY(-2px);
+    }
+    .contact-card:hover::before { opacity: 1; }
+
+    .c-icon {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,200,255,0.06); border: 1px solid rgba(0,200,255,0.15);
+      border-radius: 6px; font-size: 0.95rem; flex-shrink: 0;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .contact-card:hover .c-icon { background: rgba(0,200,255,0.15); box-shadow: 0 0 12px var(--cyan-glow); }
+
+    .c-text strong { display: block; font-size: 0.8rem; font-weight: 500; color: var(--text); }
+    .c-text span   { font-size: 0.73rem; color: var(--muted); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; padding: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted); font-size: 0.8rem;
+      background: rgba(4,8,15,0.9);
+    }
+
+    footer span { color: var(--cyan); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 720px) {
+      nav { padding: 1rem 1.5rem; }
+      nav ul { gap: 1.2rem; }
+      .cad-grid { grid-template-columns: 1fr; }
+      .project-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .exp-row { grid-template-columns: 1fr; gap: 0.3rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- PARTICLE CANVAS -->
+  <canvas id="particle-canvas"></canvas>
+
+  <nav id="navbar">
+    <div class="logo">S. Ingole</div>
+    <ul>
+      <li><a href="#cad-projects">CAD Work</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- HERO -->
+    <section id="hero">
+      <div class="container">
+        <div class="hero-inner">
+          <div class="hero-label reveal">
+            <span class="dot"></span>
+            Available for CAD Design Roles
+          </div>
+
+          <h1 class="reveal d1">
+            Shrutika<br/><em>Ingole.</em>
+          </h1>
+
+          <div class="hero-role reveal d2">
+            <span id="typewriter"></span>
+          </div>
+
+          <p class="hero-sub reveal d3">
+            Mechanical engineering student currently interning at <strong>IIT Bombay</strong> on UAV traffic management.
+            Hands-on aerospace experience at <strong>Godrej Aerospace</strong> and <strong>HAL</strong>.
+            I model, design, and analyze — from aerospace components to computational simulations.
+            Also a certified Sangeet Visharad in Hindustani Classical Music.
+          </p>
+
+          <div class="hero-badges reveal d3">
+            <span class="h-badge"><i class="fa-solid fa-cube"></i> SolidWorks</span>
+            <span class="h-badge"><i class="fa-solid fa-drafting-compass"></i> AutoCAD</span>
+            <span class="h-badge">B.Tech Mech · SVNIT</span>
+            <span class="h-badge">B.S Electronic Systems · IITM</span>
+            <span class="h-badge"><i class="fa-solid fa-plane-up"></i> EIP Aerospace · IITB</span>
+          </div>
+
+          <div class="btn-row reveal d4">
+            <a href="#cad-projects" class="btn-primary">
+              <i class="fa-solid fa-cube"></i> View CAD Work
+            </a>
+            <a href="mailto:shrutikaingole30@gmail.com" class="btn-ghost">
+              <i class="fa-regular fa-envelope"></i> Get in touch
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="scroll-hint">
+        <i class="fa-solid fa-chevron-down"></i>
+        Scroll
+      </div>
+    </section>
+
+    <!-- TOOLS MARQUEE -->
+    <div id="tools">
+      <div class="marquee-track" id="marquee">
+        <span class="tool-pill"><i class="fa-solid fa-cube"></i> SolidWorks</span>
+        <span class="tool-pill"><i class="fa-solid fa-drafting-compass"></i> AutoCAD</span>
+        <span class="tool-pill"><i class="fa-solid fa-wind"></i> ANSYS</span>
+        <span class="tool-pill"><i class="fa-solid fa-ruler-combined"></i> Metrology</span>
+        <span class="tool-pill"><i class="fa-brands fa-python"></i> Python</span>
+        <span class="tool-pill"><i class="fa-solid fa-microchip"></i> MATLAB</span>
+        <span class="tool-pill"><i class="fa-solid fa-plane-up"></i> Aerospace NDT</span>
+        <span class="tool-pill"><i class="fa-solid fa-fire"></i> Heat Treatment</span>
+        <span class="tool-pill"><i class="fa-solid fa-robot"></i> OpenCV</span>
+        <!-- duplicate for seamless loop -->
+        <span class="tool-pill"><i class="fa-solid fa-cube"></i> SolidWorks</span>
+        <span class="tool-pill"><i class="fa-solid fa-drafting-compass"></i> AutoCAD</span>
+        <span class="tool-pill"><i class="fa-solid fa-wind"></i> ANSYS</span>
+        <span class="tool-pill"><i class="fa-solid fa-ruler-combined"></i> Metrology</span>
+        <span class="tool-pill"><i class="fa-brands fa-python"></i> Python</span>
+        <span class="tool-pill"><i class="fa-solid fa-microchip"></i> MATLAB</span>
+        <span class="tool-pill"><i class="fa-solid fa-plane-up"></i> Aerospace NDT</span>
+        <span class="tool-pill"><i class="fa-solid fa-fire"></i> Heat Treatment</span>
+        <span class="tool-pill"><i class="fa-solid fa-robot"></i> OpenCV</span>
+      </div>
+    </div>
+
+    <!-- CAD PROJECTS -->
+    <section id="cad-projects">
+      <div class="container">
+        <div class="eyebrow reveal">Design Portfolio</div>
+        <div class="section-title reveal">CAD <em>Projects</em></div>
+        <div class="cad-grid">
+
+          <div class="cad-card reveal">
+            <div class="scan-line"></div>
+            <div class="cad-thumb">
+              <div class="ring"></div>
+              <span class="thumb-text">Model coming soon</span>
+            </div>
+            <div class="cad-info">
+              <h3>Project Title</h3>
+              <p class="ph">Send me your CAD screenshots or renders — I'll drop them in.</p>
+              <div class="chip-row"><span class="chip c-cyan">SolidWorks</span></div>
+            </div>
+          </div>
+
+          <div class="cad-card reveal d1">
+            <div class="scan-line"></div>
+            <div class="cad-thumb">
+              <div class="ring"></div>
+              <span class="thumb-text">Model coming soon</span>
+            </div>
+            <div class="cad-info">
+              <h3>Project Title</h3>
+              <p class="ph">Send me your CAD screenshots or renders — I'll drop them in.</p>
+              <div class="chip-row"><span class="chip c-steel">AutoCAD</span></div>
+            </div>
+          </div>
+
+          <div class="cad-card reveal d2">
+            <div class="scan-line"></div>
+            <div class="cad-thumb">
+              <div class="ring"></div>
+              <span class="thumb-text">Model coming soon</span>
+            </div>
+            <div class="cad-info">
+              <h3>Project Title</h3>
+              <p class="ph">Send me your CAD screenshots or renders — I'll drop them in.</p>
+              <div class="chip-row"><span class="chip c-green">ANSYS</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience">
+      <div class="container">
+        <div class="eyebrow reveal">Industry Exposure</div>
+        <div class="section-title reveal">Experience</div>
+        <div class="timeline">
+
+          <div class="exp-row reveal">
+            <div class="exp-meta">
+              <div class="exp-date">May 2026 – Present</div>
+              <div class="exp-city">Mumbai</div>
+            </div>
+            <div class="exp-body">
+              <h3>IIT Bombay — Dept. of Aerospace Engineering</h3>
+              <div class="exp-role"><i class="fa-regular fa-circle-dot"></i> Student Intern · UAV Traffic Management</div>
+              <ul>
+                <li>Developing path planning and collision avoidance algorithms for multi-UAV airspace coordination in urban UTM environments.</li>
+                <li>Designing communication protocol architecture for real-time data exchange between UAVs and ground control stations.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="exp-row reveal">
+            <div class="exp-meta">
+              <div class="exp-date">Jun – Jul 2025</div>
+              <div class="exp-city">Mumbai</div>
+            </div>
+            <div class="exp-body">
+              <h3>Godrej Aerospace — Quality Control</h3>
+              <div class="exp-role"><i class="fa-regular fa-circle-dot"></i> Student Intern</div>
+              <ul>
+                <li>Metallographic inspection and time-study analysis on aerospace-grade titanium components.</li>
+                <li>Mechanical testing (tensile, hardness, impact) against aerospace structural specifications.</li>
+                <li>Proposed process batching strategies to reduce inspection bottlenecks.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="exp-row reveal">
+            <div class="exp-meta">
+              <div class="exp-date">May 2024</div>
+              <div class="exp-city">Nashik</div>
+            </div>
+            <div class="exp-body">
+              <h3>Hindustan Aeronautics Limited — Central Laboratory</h3>
+              <div class="exp-role"><i class="fa-regular fa-circle-dot"></i> Student Intern</div>
+              <ul>
+                <li>NDT and chemical validation protocols for aerospace component qualification.</li>
+                <li>Heat treatment parameter effects on microstructure and mechanical properties.</li>
+                <li>Quality checkpoints across electroplating and assembly processes.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="exp-row reveal">
+            <div class="exp-meta">
+              <div class="exp-date">Apr 2024</div>
+              <div class="exp-city">Pune</div>
+            </div>
+            <div class="exp-body">
+              <h3>Quality Auto Components — Manufacturing & Heat Treatment</h3>
+              <div class="exp-role"><i class="fa-regular fa-circle-dot"></i> Student Intern</div>
+              <ul>
+                <li>Hot and cold die forging analysis for high-strength components.</li>
+                <li>Heat treatment operations and effect on material mechanical properties.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education">
+      <div class="container">
+        <div class="eyebrow reveal">Academic Background</div>
+        <div class="section-title reveal">Education</div>
+
+        <div class="edu-timeline">
+
+          <!-- vertical track -->
+          <div class="edu-track">
+            <div class="edu-track-fill" id="eduTrackFill"></div>
+          </div>
+
+          <!-- IITB -->
+          <div class="edu-item" data-index="0">
+            <div class="edu-dot">
+              <div class="edu-dot-ring"></div>
+              <div class="edu-dot-core"></div>
+            </div>
+            <div class="edu-card">
+              <div class="edu-year">2026 – 2027</div>
+              <h3 class="edu-inst">Indian Institute of Technology, Bombay</h3>
+              <div class="edu-degree">EIP — Aerospace Engineering</div>
+              <div class="edu-location"><i class="fa-solid fa-location-dot"></i> Mumbai, Maharashtra</div>
+            </div>
+          </div>
+
+          <!-- SVNIT -->
+          <div class="edu-item" data-index="1">
+            <div class="edu-dot">
+              <div class="edu-dot-ring"></div>
+              <div class="edu-dot-core"></div>
+            </div>
+            <div class="edu-card">
+              <div class="edu-year">2023 – 2026</div>
+              <h3 class="edu-inst">Sardar Vallabhbhai National Institute of Technology, Surat</h3>
+              <div class="edu-degree">B.Tech — Mechanical Engineering</div>
+              <div class="edu-cgpa">CGPA <span>8.03</span> / 10</div>
+              <div class="edu-location"><i class="fa-solid fa-location-dot"></i> Surat, Gujarat</div>
+            </div>
+          </div>
+
+          <!-- IITM -->
+          <div class="edu-item" data-index="2">
+            <div class="edu-dot">
+              <div class="edu-dot-ring"></div>
+              <div class="edu-dot-core"></div>
+            </div>
+            <div class="edu-card">
+              <div class="edu-year">2024 – 2028</div>
+              <h3 class="edu-inst">Indian Institute of Technology, Madras</h3>
+              <div class="edu-degree">B.S — Electronic Systems</div>
+              <div class="edu-cgpa">CGPA <span>7.53</span> / 10</div>
+              <div class="edu-location"><i class="fa-solid fa-location-dot"></i> Chennai, Tamil Nadu</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- OTHER PROJECTS -->
+    <section id="projects">
+      <div class="container">
+        <div class="eyebrow reveal">Engineering Projects</div>
+        <div class="section-title reveal">Other <em>Work</em></div>
+        <div class="project-grid">
+
+          <div class="p-card reveal">
+            <div class="p-top">
+              <div class="p-icon"><i class="fa-solid fa-microscope"></i></div>
+              <span class="p-status s-ongoing">Ongoing</span>
+            </div>
+            <h3>Vision-Based Mechanical Property Prediction — Friction Stir Welding</h3>
+            <p>ML pipeline predicting tensile strength and hardness from weld surface images, enabling non-destructive property estimation via automated defect segmentation.</p>
+            <div class="chip-row" style="margin-top:0.8rem">
+              <span class="chip c-cyan">Python</span>
+              <span class="chip c-cyan">Computer Vision</span>
+              <span class="chip c-cyan">ML</span>
+            </div>
+          </div>
+
+          <div class="p-card reveal d1">
+            <div class="p-top">
+              <div class="p-icon"><i class="fa-solid fa-wind"></i></div>
+              <span class="p-status s-done">2026</span>
+            </div>
+            <h3>Compressible Flow Analysis — Converging–Diverging Nozzle</h3>
+            <p>Isentropic flow model in Python with iterative solvers for the Area–Mach relation. Analyzed choking and back-pressure effects against analytical solutions.</p>
+            <div class="chip-row" style="margin-top:0.8rem">
+              <span class="chip c-steel">Python</span>
+              <span class="chip c-steel">CFD</span>
+              <span class="chip c-steel">Numerical Methods</span>
+            </div>
+          </div>
+
+          <div class="p-card reveal d2">
+            <div class="p-top">
+              <div class="p-icon"><i class="fa-solid fa-wave-square"></i></div>
+              <span class="p-status s-ongoing">Ongoing</span>
+            </div>
+            <h3>Dynamic Modeling & Stability — 2nd-Order Mechanical System</h3>
+            <p>State-space model of a mass–spring–damper system. Eigenvalue stability, step response simulation, and phase portraits using Python ODE solvers.</p>
+            <div class="chip-row" style="margin-top:0.8rem">
+              <span class="chip c-green">Python</span>
+              <span class="chip c-green">Control Theory</span>
+            </div>
+          </div>
+
+          <div class="p-card reveal d3">
+            <div class="p-top">
+              <div class="p-icon"><i class="fa-solid fa-robot"></i></div>
+              <span class="p-status s-done">2024</span>
+            </div>
+            <h3>Object Following Bot</h3>
+            <p>Real-time tracking robot using YOLOv8 and Arduino motor control. Closed-loop serial communication; evaluated under dynamic tracking conditions.</p>
+            <div class="chip-row" style="margin-top:0.8rem">
+              <span class="chip c-purple">YOLOv8</span>
+              <span class="chip c-purple">Arduino</span>
+              <span class="chip c-purple">OpenCV</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <div class="container">
+        <div class="eyebrow reveal">Technical Expertise</div>
+        <div class="section-title reveal">Skills</div>
+        <div class="skills-grid">
+          <div class="skill-group primary reveal">
+            <h4><i class="fa-solid fa-cube"></i> CAD & Design</h4>
+            <ul>
+              <li>SolidWorks</li>
+              <li>AutoCAD</li>
+              <li>Part & Assembly Modeling</li>
+              <li>2D Drafting & GD&T</li>
+            </ul>
+          </div>
+          <div class="skill-group primary reveal d1">
+            <h4><i class="fa-solid fa-wind"></i> Simulation</h4>
+            <ul>
+              <li>ANSYS (Fundamentals)</li>
+              <li>Flow Modeling</li>
+              <li>FEA Basics</li>
+              <li>Numerical Methods</li>
+            </ul>
+          </div>
+          <div class="skill-group reveal d2">
+            <h4><i class="fa-solid fa-plane-up"></i> Aerospace & Testing</h4>
+            <ul>
+              <li>NDT Methods</li>
+              <li>Metrology</li>
+              <li>Mechanical Testing</li>
+              <li>Heat Treatment</li>
+            </ul>
+          </div>
+          <div class="skill-group reveal d3">
+            <h4><i class="fa-solid fa-code"></i> Programming</h4>
+            <ul>
+              <li>Python (NumPy, Matplotlib)</li>
+              <li>MATLAB</li>
+              <li>C</li>
+            </ul>
+          </div>
+          <div class="skill-group reveal d4">
+            <h4><i class="fa-solid fa-microchip"></i> Embedded & CV</h4>
+            <ul>
+              <li>STM32 / Arduino</li>
+              <li>OpenCV</li>
+              <li>Serial Protocols</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="container">
+        <div class="eyebrow reveal">Get in touch</div>
+        <div class="section-title reveal">Contact</div>
+        <p class="reveal" style="color:var(--muted);font-weight:300;max-width:440px;margin-bottom:2.5rem;">
+          Open to CAD design roles, internships, and collaborations in mechanical or aerospace engineering.
+        </p>
+        <div class="contact-grid reveal">
+          <a href="mailto:shrutikaingole30@gmail.com" class="contact-card">
+            <div class="c-icon"><i class="fa-regular fa-envelope"></i></div>
+            <div class="c-text">
+              <strong>Email</strong>
+              <span>shrutikaingole30@gmail.com</span>
+            </div>
+          </a>
+          <a href="https://linkedin.com/in/shrutika-ingole1" target="_blank" class="contact-card">
+            <div class="c-icon"><i class="fa-brands fa-linkedin-in"></i></div>
+            <div class="c-text">
+              <strong>LinkedIn</strong>
+              <span>shrutika-ingole1</span>
+            </div>
+          </a>
+          <a href="https://github.com/shrutikaingole15" target="_blank" class="contact-card">
+            <div class="c-icon"><i class="fa-brands fa-github"></i></div>
+            <div class="c-text">
+              <strong>GitHub</strong>
+              <span>shrutikaingole15</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Shrutika Ingole &nbsp;·&nbsp; CAD & Mechanical Design &nbsp;·&nbsp; <span>2025</span></p>
+  </footer>
+
+  <script>
+    // ── PARTICLE BACKGROUND ──
+    const canvas = document.getElementById('particle-canvas');
+    const ctx    = canvas.getContext('2d');
+    let W, H, particles = [];
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x  = Math.random() * W;
+        this.y  = Math.random() * H;
+        this.vx = (Math.random() - 0.5) * 0.3;
+        this.vy = (Math.random() - 0.5) * 0.3;
+        this.r  = Math.random() * 1.2 + 0.3;
+        this.a  = Math.random() * 0.5 + 0.1;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0,200,255,${this.a})`;
+        ctx.fill();
+      }
+    }
+
+    function initParticles() {
+      particles = [];
+      const count = Math.floor((W * H) / 14000);
+      for (let i = 0; i < count; i++) particles.push(new Particle());
+    }
+
+    function drawLines() {
+      const dist = 130;
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const d  = Math.sqrt(dx*dx + dy*dy);
+          if (d < dist) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(0,200,255,${0.12 * (1 - d / dist)})`;
+            ctx.lineWidth   = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, W, H);
+      particles.forEach(p => { p.update(); p.draw(); });
+      drawLines();
+      requestAnimationFrame(animate);
+    }
+
+    resize();
+    initParticles();
+    animate();
+    window.addEventListener('resize', () => { resize(); initParticles(); });
+
+    // ── SCROLL REVEAL ──
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal, .reveal-left').forEach(el => observer.observe(el));
+
+    // ── NAV SHADOW ──
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // ── TYPEWRITER ──
+    const phrases = [
+      'CAD Designer',
+      'Mechanical Engineer',
+      'Aerospace Enthusiast',
+      'SolidWorks · AutoCAD',
+    ];
+    let pi = 0, ci = 0, deleting = false;
+    const el = document.getElementById('typewriter');
+
+    function type() {
+      const current = phrases[pi];
+      if (!deleting) {
+        el.textContent = current.slice(0, ++ci);
+        if (ci === current.length) { deleting = true; setTimeout(type, 1800); return; }
+      } else {
+        el.textContent = current.slice(0, --ci);
+        if (ci === 0) { deleting = false; pi = (pi + 1) % phrases.length; }
+      }
+      setTimeout(type, deleting ? 45 : 80);
+    }
+
+    setTimeout(type, 900);
+
+    // ── EDUCATION TIMELINE ──
+    const eduItems  = document.querySelectorAll('.edu-item');
+    const trackFill = document.getElementById('eduTrackFill');
+    const eduTrack  = document.querySelector('.edu-track');
+
+    function updateEduTimeline() {
+      if (!eduTrack) return;
+      const trackRect  = eduTrack.getBoundingClientRect();
+      const trackTop   = trackRect.top;
+      const trackH     = trackRect.height;
+      const viewH      = window.innerHeight;
+
+      // how far the track has entered the viewport (0 → 1)
+      const progress = Math.min(1, Math.max(0, (viewH - trackTop) / (viewH + trackH)));
+      trackFill.style.height = (progress * 100) + '%';
+
+      // activate each dot when the card centre crosses 75% down viewport
+      eduItems.forEach(item => {
+        const rect = item.getBoundingClientRect();
+        const mid  = rect.top + rect.height / 2;
+        if (mid < viewH * 0.82) {
+          item.classList.add('active');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', updateEduTimeline, { passive: true });
+    updateEduTimeline();
+  </script>
+
+</body>
+</html>
