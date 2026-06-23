@@ -930,6 +930,7 @@
     <!-- TOOLS MARQUEE -->
     <div id="tools">
       <div class="marquee-track" id="marquee">
+        <span class="tool-pill"><i class="fa-solid fa-cube"></i> FreeCAD</span>
         <span class="tool-pill"><i class="fa-solid fa-cube"></i> SolidWorks</span>
         <span class="tool-pill"><i class="fa-solid fa-drafting-compass"></i> AutoCAD</span>
         <span class="tool-pill"><i class="fa-solid fa-wind"></i> ANSYS</span>
@@ -940,6 +941,7 @@
         <span class="tool-pill"><i class="fa-solid fa-fire"></i> Heat Treatment</span>
         <span class="tool-pill"><i class="fa-solid fa-robot"></i> OpenCV</span>
         <!-- duplicate for seamless loop -->
+        <span class="tool-pill"><i class="fa-solid fa-cube"></i> FreeCAD</span>
         <span class="tool-pill"><i class="fa-solid fa-cube"></i> SolidWorks</span>
         <span class="tool-pill"><i class="fa-solid fa-drafting-compass"></i> AutoCAD</span>
         <span class="tool-pill"><i class="fa-solid fa-wind"></i> ANSYS</span>
@@ -963,12 +965,20 @@
             <div class="scan-line"></div>
             <div class="cad-thumb">
               <div class="ring"></div>
-              <span class="thumb-text">Model coming soon</span>
+              <span class="thumb-text">View coming soon</span>
             </div>
             <div class="cad-info">
-              <h3>Project Title</h3>
-              <p class="ph">Send me your CAD screenshots or renders — I'll drop them in.</p>
-              <div class="chip-row"><span class="chip c-cyan">SolidWorks</span></div>
+              <h3>Sketched Solid — Groove &amp; Pocket</h3>
+              <p>Constrained 2D sketch extruded via Pad, then material removed with a Groove (revolve-cut) and a Pocket. Datum Line used as groove axis reference — clean design intent, no geometry-edge dependencies.</p>
+              <div class="chip-row" style="margin-bottom:0.6rem">
+                <span class="chip c-cyan">FreeCAD 1.1</span>
+                <span class="chip c-steel">Pad</span>
+                <span class="chip c-steel">Groove</span>
+                <span class="chip c-steel">Pocket</span>
+              </div>
+              <a href="https://github.com/shrutikaingole15/CAD-portfolio/tree/main/01_sketched-solid" target="_blank" style="font-size:0.75rem;color:var(--cyan);text-decoration:none;opacity:0.7;">
+                <i class="fa-brands fa-github"></i> View on GitHub
+              </a>
             </div>
           </div>
 
@@ -976,12 +986,20 @@
             <div class="scan-line"></div>
             <div class="cad-thumb">
               <div class="ring"></div>
-              <span class="thumb-text">Model coming soon</span>
+              <span class="thumb-text">View coming soon</span>
             </div>
             <div class="cad-info">
-              <h3>Project Title</h3>
-              <p class="ph">Send me your CAD screenshots or renders — I'll drop them in.</p>
-              <div class="chip-row"><span class="chip c-steel">AutoCAD</span></div>
+              <h3>Multi-Feature Block with Fillets</h3>
+              <p>Complex solid built with sequential Pad operations, then refined using SubtractiveBox and SubtractiveCylinder cuts. Fillet edges added for manufacturability. Multi-step model tree stays fully parametric throughout.</p>
+              <div class="chip-row" style="margin-bottom:0.6rem">
+                <span class="chip c-cyan">FreeCAD 1.1</span>
+                <span class="chip c-steel">Pad ×3</span>
+                <span class="chip c-steel">Fillet</span>
+                <span class="chip c-steel">SubtractiveCylinder</span>
+              </div>
+              <a href="https://github.com/shrutikaingole15/CAD-portfolio/tree/main/02_multifeature-block" target="_blank" style="font-size:0.75rem;color:var(--cyan);text-decoration:none;opacity:0.7;">
+                <i class="fa-brands fa-github"></i> View on GitHub
+              </a>
             </div>
           </div>
 
@@ -989,12 +1007,19 @@
             <div class="scan-line"></div>
             <div class="cad-thumb">
               <div class="ring"></div>
-              <span class="thumb-text">Model coming soon</span>
+              <span class="thumb-text">View coming soon</span>
             </div>
             <div class="cad-info">
-              <h3>Project Title</h3>
-              <p class="ph">Send me your CAD screenshots or renders — I'll drop them in.</p>
-              <div class="chip-row"><span class="chip c-green">ANSYS</span></div>
+              <h3>Revolved / Turned Part</h3>
+              <p>Rotationally symmetric part created by revolving a profile sketch 360° — the FreeCAD equivalent of a lathe operation. A Pocket is cut into the face for an internal feature. Common form in shafts, caps, and bushings.</p>
+              <div class="chip-row" style="margin-bottom:0.6rem">
+                <span class="chip c-cyan">FreeCAD 1.1</span>
+                <span class="chip c-steel">Revolution</span>
+                <span class="chip c-steel">Pocket</span>
+              </div>
+              <a href="https://github.com/shrutikaingole15/CAD-portfolio/tree/main/03_revolved-part" target="_blank" style="font-size:0.75rem;color:var(--cyan);text-decoration:none;opacity:0.7;">
+                <i class="fa-brands fa-github"></i> View on GitHub
+              </a>
             </div>
           </div>
 
