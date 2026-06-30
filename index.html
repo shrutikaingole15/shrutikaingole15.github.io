@@ -10,17 +10,17 @@
 
   <style>
     :root {
-      --bg:       #04080f;
-      --surface:  #080d18;
-      --surface2: #0d1525;
-      --cyan:     #00c8ff;
-      --cyan-dim: rgba(0, 200, 255, 0.15);
-      --cyan-glow:rgba(0, 200, 255, 0.35);
-      --blue:     #3b82f6;
-      --text:     #e2e8f0;
-      --muted:    #64748b;
-      --border:   rgba(0, 200, 255, 0.12);
-      --border-hover: rgba(0, 200, 255, 0.45);
+      --bg:        #080808;
+      --surface:   #111111;
+      --surface2:  #161616;
+      --purple:    #a78bfa;
+      --purple-2:  #818cf8;
+      --purple-dim: rgba(167,139,250,0.15);
+      --purple-glow:rgba(167,139,250,0.35);
+      --text:      #e2e8f0;
+      --muted:     #64748b;
+      --border:    rgba(167,139,250,0.12);
+      --border-hover: rgba(167,139,250,0.45);
     }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -35,16 +35,91 @@
       overflow-x: hidden;
     }
 
-    /* ── CANVAS BACKGROUND ── */
-    #particle-canvas {
+    /* ── DOT GRID BACKGROUND ── */
+    body::before {
+      content: '';
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      inset: 0;
       z-index: 0;
       pointer-events: none;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 28px 28px;
     }
 
-    /* everything above canvas */
+    /* ── AURORA BLOBS ── */
+    .aurora {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .aurora-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.55;
+      will-change: transform;
+    }
+
+    /* left blob — purple */
+    .aurora-blob-1 {
+      width: 700px;
+      height: 700px;
+      left: -220px;
+      top: 5%;
+      background: radial-gradient(ellipse at center,
+        rgba(139,92,246,0.85) 0%,
+        rgba(109,40,217,0.5) 40%,
+        transparent 70%);
+      animation: float1 12s ease-in-out infinite;
+    }
+
+    /* right blob — blue-indigo */
+    .aurora-blob-2 {
+      width: 700px;
+      height: 700px;
+      right: -220px;
+      top: 10%;
+      background: radial-gradient(ellipse at center,
+        rgba(99,102,241,0.8) 0%,
+        rgba(79,70,229,0.5) 40%,
+        transparent 70%);
+      animation: float2 14s ease-in-out infinite;
+    }
+
+    /* subtle bottom center glow */
+    .aurora-blob-3 {
+      width: 500px;
+      height: 400px;
+      left: 50%;
+      bottom: -100px;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center,
+        rgba(167,139,250,0.3) 0%,
+        transparent 70%);
+      animation: float3 18s ease-in-out infinite;
+    }
+
+    @keyframes float1 {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      33%       { transform: translateY(40px) scale(1.05); }
+      66%       { transform: translateY(-25px) scale(0.97); }
+    }
+
+    @keyframes float2 {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      33%       { transform: translateY(-35px) scale(1.04); }
+      66%       { transform: translateY(50px) scale(0.98); }
+    }
+
+    @keyframes float3 {
+      0%, 100% { transform: translateX(-50%) scale(1); }
+      50%       { transform: translateX(-50%) scale(1.1); }
+    }
+
+    /* everything above aurora */
     nav, main, footer { position: relative; z-index: 1; }
 
     /* ── NAV ── */
@@ -55,8 +130,8 @@
       justify-content: space-between;
       align-items: center;
       padding: 1.1rem 3rem;
-      background: rgba(4, 8, 15, 0.75);
-      backdrop-filter: blur(16px);
+      background: rgba(8,8,8,0.7);
+      backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
       transition: border-color 0.3s;
     }
@@ -67,9 +142,9 @@
       font-family: 'Caveat', cursive;
       font-size: 1.6rem;
       font-weight: 700;
-      color: var(--cyan);
+      color: var(--purple);
       letter-spacing: 0.02em;
-      text-shadow: 0 0 20px var(--cyan-glow);
+      text-shadow: 0 0 20px var(--purple-glow);
     }
 
     nav ul { list-style: none; display: flex; gap: 2.5rem; }
@@ -90,12 +165,12 @@
       position: absolute;
       bottom: -3px; left: 0;
       width: 0; height: 1px;
-      background: var(--cyan);
-      box-shadow: 0 0 6px var(--cyan);
+      background: var(--purple);
+      box-shadow: 0 0 6px var(--purple);
       transition: width 0.3s ease;
     }
 
-    nav ul li a:hover { color: var(--cyan); }
+    nav ul li a:hover { color: var(--purple); }
     nav ul li a:hover::after { width: 100%; }
 
     /* ── LAYOUT ── */
@@ -107,7 +182,7 @@
       font-weight: 600;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--cyan);
+      color: var(--purple);
       margin-bottom: 0.6rem;
       display: flex;
       align-items: center;
@@ -118,8 +193,8 @@
       content: '';
       display: inline-block;
       width: 20px; height: 1px;
-      background: var(--cyan);
-      box-shadow: 0 0 6px var(--cyan);
+      background: var(--purple);
+      box-shadow: 0 0 6px var(--purple);
     }
 
     .section-title {
@@ -136,8 +211,8 @@
       font-style: normal;
       font-weight: 700;
       font-size: 1.1em;
-      color: var(--cyan);
-      text-shadow: 0 0 20px var(--cyan-glow);
+      color: var(--purple);
+      text-shadow: 0 0 20px var(--purple-glow);
     }
 
     /* ── REVEAL ANIMATIONS ── */
@@ -165,17 +240,6 @@
       overflow: hidden;
     }
 
-    /* radial glow behind hero text */
-    #hero::before {
-      content: '';
-      position: absolute;
-      top: 30%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 700px; height: 700px;
-      background: radial-gradient(ellipse, rgba(0,200,255,0.07) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
     .hero-inner {
       display: flex;
       flex-direction: column;
@@ -188,19 +252,18 @@
       font-weight: 600;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--cyan);
+      color: var(--purple);
       display: flex;
       align-items: center;
       gap: 0.7rem;
       margin-bottom: 0.5rem;
     }
 
-    /* blinking dot */
     .dot {
       width: 7px; height: 7px;
-      background: var(--cyan);
+      background: var(--purple);
       border-radius: 50%;
-      box-shadow: 0 0 8px var(--cyan);
+      box-shadow: 0 0 8px var(--purple);
       animation: blink 1.6s ease-in-out infinite;
       flex-shrink: 0;
     }
@@ -221,8 +284,8 @@
 
     #hero h1 em {
       font-style: normal;
-      color: var(--cyan);
-      text-shadow: 0 0 40px var(--cyan-glow), 0 0 80px rgba(0,200,255,0.15);
+      color: var(--purple);
+      text-shadow: 0 0 40px var(--purple-glow), 0 0 80px rgba(167,139,250,0.15);
     }
 
     .hero-role {
@@ -231,15 +294,14 @@
       color: var(--muted);
       letter-spacing: 0.05em;
       margin-top: 0.8rem;
-      border-left: 2px solid var(--cyan);
+      border-left: 2px solid var(--purple);
       padding-left: 1rem;
       min-height: 1.5rem;
     }
 
-    /* typewriter cursor */
     #typewriter::after {
       content: '|';
-      color: var(--cyan);
+      color: var(--purple);
       animation: blink 0.9s step-end infinite;
     }
 
@@ -260,8 +322,8 @@
       display: inline-flex; align-items: center; gap: 0.5rem;
       padding: 0.8rem 1.8rem;
       background: transparent;
-      color: var(--cyan);
-      border: 1px solid var(--cyan);
+      color: var(--purple);
+      border: 1px solid var(--purple);
       border-radius: 4px;
       text-decoration: none;
       font-size: 0.88rem; font-weight: 500;
@@ -274,14 +336,14 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: var(--cyan);
+      background: var(--purple);
       transform: scaleX(0);
       transform-origin: left;
       transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
       z-index: -1;
     }
 
-    .btn-primary:hover { color: #000; box-shadow: 0 0 20px var(--cyan-glow); }
+    .btn-primary:hover { color: #000; box-shadow: 0 0 20px var(--purple-glow); }
     .btn-primary:hover::before { transform: scaleX(1); }
 
     .btn-ghost {
@@ -293,24 +355,22 @@
       border-radius: 4px;
       transition: border-color 0.25s, color 0.25s;
     }
-    .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+    .btn-ghost:hover { border-color: var(--purple); color: var(--purple); }
 
-    /* hero badges */
     .hero-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1.5rem; }
 
     .h-badge {
       font-size: 0.72rem; font-weight: 500;
       padding: 0.25rem 0.8rem;
       border-radius: 2px;
-      border: 1px solid rgba(0,200,255,0.25);
-      background: rgba(0,200,255,0.06);
+      border: 1px solid rgba(167,139,250,0.25);
+      background: rgba(167,139,250,0.06);
       color: #94a3b8;
       letter-spacing: 0.04em;
       transition: border-color 0.2s, color 0.2s;
     }
-    .h-badge:hover { border-color: var(--cyan); color: var(--cyan); }
+    .h-badge:hover { border-color: var(--purple); color: var(--purple); }
 
-    /* scroll indicator */
     .scroll-hint {
       position: absolute;
       bottom: 2.5rem; left: 50%;
@@ -332,7 +392,7 @@
       padding: 1.5rem 0;
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      background: rgba(8,13,24,0.8);
+      background: rgba(8,8,8,0.6);
       overflow: hidden;
     }
 
@@ -354,13 +414,13 @@
       padding: 0.4rem 1rem;
       border: 1px solid var(--border);
       border-radius: 2px;
-      background: rgba(0,200,255,0.03);
+      background: rgba(167,139,250,0.03);
       white-space: nowrap;
       flex-shrink: 0;
       transition: border-color 0.2s, color 0.2s;
     }
 
-    .tool-pill i { color: var(--cyan); font-size: 0.8rem; }
+    .tool-pill i { color: var(--purple); font-size: 0.8rem; }
 
     /* ── CAD PROJECTS ── */
     #cad-projects { background: transparent; }
@@ -381,13 +441,12 @@
       cursor: default;
     }
 
-    /* animated corner accents */
     .cad-card::before,
     .cad-card::after {
       content: '';
       position: absolute;
       width: 12px; height: 12px;
-      border-color: var(--cyan);
+      border-color: var(--purple);
       border-style: solid;
       opacity: 0;
       transition: opacity 0.3s, width 0.3s, height 0.3s;
@@ -400,17 +459,16 @@
     .cad-card:hover::after { opacity: 1; width: 20px; height: 20px; }
 
     .cad-card:hover {
-      border-color: rgba(0,200,255,0.4);
-      box-shadow: 0 0 30px rgba(0,200,255,0.08), inset 0 0 30px rgba(0,200,255,0.03);
+      border-color: rgba(167,139,250,0.4);
+      box-shadow: 0 0 30px rgba(167,139,250,0.1), inset 0 0 30px rgba(167,139,250,0.04);
       transform: translateY(-4px);
     }
 
-    /* scan line animation on hover */
     .cad-card .scan-line {
       position: absolute;
       top: -100%; left: 0;
       width: 100%; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      background: linear-gradient(90deg, transparent, var(--purple), transparent);
       opacity: 0;
       z-index: 3;
       pointer-events: none;
@@ -438,10 +496,9 @@
       position: relative; overflow: hidden;
     }
 
-    /* animated ring in placeholder */
     .cad-thumb .ring {
       width: 50px; height: 50px;
-      border: 1px solid rgba(0,200,255,0.2);
+      border: 1px solid rgba(167,139,250,0.2);
       border-radius: 50%;
       position: relative;
       animation: spin-slow 6s linear infinite;
@@ -452,9 +509,9 @@
       position: absolute;
       top: -1px; left: 30%;
       width: 8px; height: 8px;
-      background: var(--cyan);
+      background: var(--purple);
       border-radius: 50%;
-      box-shadow: 0 0 8px var(--cyan);
+      box-shadow: 0 0 8px var(--purple);
       transform: translateX(-50%);
     }
 
@@ -465,7 +522,7 @@
 
     .cad-thumb .thumb-text {
       font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
-      color: rgba(0,200,255,0.3);
+      color: rgba(167,139,250,0.3);
     }
 
     .cad-thumb img {
@@ -478,7 +535,7 @@
 
     .cad-info h3 { font-size: 0.93rem; font-weight: 500; margin-bottom: 0.3rem; color: var(--text); }
     .cad-info p  { font-size: 0.82rem; color: var(--muted); font-weight: 300; line-height: 1.55; margin-bottom: 0.8rem; }
-    .cad-info .ph { font-style: italic; color: rgba(0,200,255,0.25); }
+    .cad-info .ph { font-style: italic; color: rgba(167,139,250,0.25); }
 
     .chip-row { display: flex; flex-wrap: wrap; gap: 0.3rem; }
 
@@ -488,10 +545,10 @@
       border-radius: 2px; border: 1px solid;
       letter-spacing: 0.04em;
     }
-    .c-cyan   { background: rgba(0,200,255,0.08); border-color: rgba(0,200,255,0.3); color: var(--cyan); }
+    .c-cyan   { background: rgba(167,139,250,0.08); border-color: rgba(167,139,250,0.3); color: var(--purple); }
     .c-steel  { background: rgba(148,163,184,0.08); border-color: rgba(148,163,184,0.25); color: #94a3b8; }
     .c-green  { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.3); color: #34d399; }
-    .c-purple { background: rgba(167,139,250,0.08); border-color: rgba(167,139,250,0.3); color: #a78bfa; }
+    .c-purple { background: rgba(167,139,250,0.08); border-color: rgba(167,139,250,0.3); color: var(--purple); }
 
     /* ── EXPERIENCE ── */
     #experience { background: transparent; }
@@ -512,13 +569,13 @@
     .exp-date { font-size: 0.77rem; color: var(--muted); line-height: 1.5; }
     .exp-city {
       font-family: 'Caveat', cursive;
-      font-size: 1.05rem; color: var(--cyan); margin-top: 0.2rem;
-      text-shadow: 0 0 10px var(--cyan-glow);
+      font-size: 1.05rem; color: var(--purple); margin-top: 0.2rem;
+      text-shadow: 0 0 10px var(--purple-glow);
     }
 
     .exp-body h3 { font-size: 0.96rem; font-weight: 500; margin-bottom: 0.15rem; color: var(--text); }
     .exp-role {
-      font-size: 0.79rem; color: var(--cyan); margin-bottom: 0.75rem;
+      font-size: 0.79rem; color: var(--purple); margin-bottom: 0.75rem;
       display: flex; align-items: center; gap: 0.4rem; opacity: 0.8;
     }
     .exp-body ul { padding-left: 1rem; font-size: 0.87rem; color: var(--muted); font-weight: 300; }
@@ -547,14 +604,14 @@
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      background: linear-gradient(90deg, transparent, var(--purple), transparent);
       transform: scaleX(0);
       transition: transform 0.4s ease;
     }
 
     .p-card:hover {
-      border-color: rgba(0,200,255,0.3);
-      box-shadow: 0 8px 32px rgba(0,200,255,0.07);
+      border-color: rgba(167,139,250,0.3);
+      box-shadow: 0 8px 32px rgba(167,139,250,0.08);
       transform: translateY(-3px);
     }
 
@@ -565,9 +622,9 @@
     .p-icon {
       width: 34px; height: 34px;
       display: flex; align-items: center; justify-content: center;
-      background: rgba(0,200,255,0.08); border-radius: 6px;
-      color: var(--cyan); font-size: 0.9rem;
-      border: 1px solid rgba(0,200,255,0.2);
+      background: rgba(167,139,250,0.08); border-radius: 6px;
+      color: var(--purple); font-size: 0.9rem;
+      border: 1px solid rgba(167,139,250,0.2);
     }
 
     .p-status {
@@ -591,29 +648,26 @@
       gap: 0;
     }
 
-    /* vertical grey track */
     .edu-track {
       position: absolute;
       left: 7px;
       top: 10px;
       bottom: 10px;
       width: 2px;
-      background: rgba(0, 200, 255, 0.1);
+      background: rgba(167,139,250,0.1);
       border-radius: 2px;
       overflow: hidden;
     }
 
-    /* cyan fill that grows as you scroll */
     .edu-track-fill {
       width: 100%;
       height: 0%;
-      background: linear-gradient(to bottom, var(--cyan), rgba(0,200,255,0.3));
-      box-shadow: 0 0 8px var(--cyan-glow);
+      background: linear-gradient(to bottom, var(--purple), rgba(167,139,250,0.3));
+      box-shadow: 0 0 8px var(--purple-glow);
       border-radius: 2px;
       transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* each row */
     .edu-item {
       display: flex;
       align-items: flex-start;
@@ -622,7 +676,6 @@
       position: relative;
     }
 
-    /* dot on the track */
     .edu-dot {
       position: absolute;
       left: -3rem;
@@ -638,30 +691,28 @@
     .edu-dot-core {
       width: 8px;
       height: 8px;
-      background: rgba(0,200,255,0.25);
-      border: 1.5px solid rgba(0,200,255,0.3);
+      background: rgba(167,139,250,0.25);
+      border: 1.5px solid rgba(167,139,250,0.3);
       border-radius: 50%;
       transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
       position: relative;
       z-index: 1;
     }
 
-    /* expanding ring on activation */
     .edu-dot-ring {
       position: absolute;
       width: 16px; height: 16px;
-      border: 1.5px solid rgba(0,200,255,0.2);
+      border: 1.5px solid rgba(167,139,250,0.2);
       border-radius: 50%;
       transform: scale(0.5);
       opacity: 0;
       transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), opacity 0.4s;
     }
 
-    /* active state — triggered by JS */
     .edu-item.active .edu-dot-core {
-      background: var(--cyan);
-      border-color: var(--cyan);
-      box-shadow: 0 0 12px var(--cyan), 0 0 24px var(--cyan-glow);
+      background: var(--purple);
+      border-color: var(--purple);
+      box-shadow: 0 0 12px var(--purple), 0 0 24px var(--purple-glow);
     }
 
     .edu-item.active .edu-dot-ring {
@@ -675,7 +726,6 @@
       50%       { transform: scale(1.5); opacity: 0;   }
     }
 
-    /* card */
     .edu-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -693,8 +743,8 @@
     .edu-item.active .edu-card {
       transform: translateX(0);
       opacity: 1;
-      border-color: rgba(0,200,255,0.3);
-      box-shadow: 0 4px 24px rgba(0,200,255,0.07);
+      border-color: rgba(167,139,250,0.3);
+      box-shadow: 0 4px 24px rgba(167,139,250,0.08);
     }
 
     .edu-item.active:nth-child(2) .edu-card { transition-delay: 0.1s; }
@@ -705,7 +755,7 @@
       font-size: 0.72rem;
       font-weight: 600;
       letter-spacing: 0.1em;
-      color: var(--cyan);
+      color: var(--purple);
       text-transform: uppercase;
       margin-bottom: 0.4rem;
       opacity: 0.8;
@@ -735,7 +785,7 @@
     .edu-cgpa span {
       font-family: 'Caveat', cursive;
       font-size: 1.1rem;
-      color: var(--cyan);
+      color: var(--purple);
       font-weight: 700;
     }
 
@@ -748,7 +798,7 @@
       margin-top: 0.5rem;
     }
 
-    .edu-location i { color: rgba(0,200,255,0.4); font-size: 0.7rem; }
+    .edu-location i { color: rgba(167,139,250,0.4); font-size: 0.7rem; }
 
     /* ── SKILLS ── */
     #skills { background: transparent; }
@@ -773,25 +823,25 @@
       position: absolute;
       bottom: 0; left: 0;
       width: 0; height: 1px;
-      background: var(--cyan);
-      box-shadow: 0 0 6px var(--cyan);
+      background: var(--purple);
+      box-shadow: 0 0 6px var(--purple);
       transition: width 0.4s ease;
     }
 
     .skill-group:hover::after { width: 100%; }
-    .skill-group:hover { border-color: rgba(0,200,255,0.3); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,200,255,0.06); }
-    .skill-group.primary { border-color: rgba(0,200,255,0.3); }
+    .skill-group:hover { border-color: rgba(167,139,250,0.3); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(167,139,250,0.07); }
+    .skill-group.primary { border-color: rgba(167,139,250,0.3); }
 
     .skill-group h4 {
       font-size: 0.72rem; font-weight: 600;
       text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--cyan); margin-bottom: 0.9rem;
+      color: var(--purple); margin-bottom: 0.9rem;
       display: flex; align-items: center; gap: 0.5rem;
     }
 
     .skill-group ul { list-style: none; font-size: 0.87rem; color: var(--muted); line-height: 2; font-weight: 300; }
 
-    .skill-group ul li::before { content: '↗ '; color: rgba(0,200,255,0.4); font-size: 0.75rem; }
+    .skill-group ul li::before { content: '↗ '; color: rgba(167,139,250,0.4); font-size: 0.75rem; }
 
     /* ── CONTACT ── */
     #contact { background: transparent; padding-bottom: 5rem; }
@@ -813,15 +863,15 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(0,200,255,0.05), transparent);
+      background: linear-gradient(135deg, rgba(167,139,250,0.05), transparent);
       opacity: 0;
       transition: opacity 0.3s;
     }
 
     .contact-card:hover {
-      border-color: rgba(0,200,255,0.4);
-      color: var(--cyan);
-      box-shadow: 0 0 24px rgba(0,200,255,0.08);
+      border-color: rgba(167,139,250,0.4);
+      color: var(--purple);
+      box-shadow: 0 0 24px rgba(167,139,250,0.09);
       transform: translateY(-2px);
     }
     .contact-card:hover::before { opacity: 1; }
@@ -829,11 +879,11 @@
     .c-icon {
       width: 36px; height: 36px;
       display: flex; align-items: center; justify-content: center;
-      background: rgba(0,200,255,0.06); border: 1px solid rgba(0,200,255,0.15);
+      background: rgba(167,139,250,0.06); border: 1px solid rgba(167,139,250,0.15);
       border-radius: 6px; font-size: 0.95rem; flex-shrink: 0;
       transition: background 0.3s, box-shadow 0.3s;
     }
-    .contact-card:hover .c-icon { background: rgba(0,200,255,0.15); box-shadow: 0 0 12px var(--cyan-glow); }
+    .contact-card:hover .c-icon { background: rgba(167,139,250,0.15); box-shadow: 0 0 12px var(--purple-glow); }
 
     .c-text strong { display: block; font-size: 0.8rem; font-weight: 500; color: var(--text); }
     .c-text span   { font-size: 0.73rem; color: var(--muted); }
@@ -843,10 +893,10 @@
       text-align: center; padding: 2rem;
       border-top: 1px solid var(--border);
       color: var(--muted); font-size: 0.8rem;
-      background: rgba(4,8,15,0.9);
+      background: rgba(8,8,8,0.9);
     }
 
-    footer span { color: var(--cyan); }
+    footer span { color: var(--purple); }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 720px) {
@@ -862,8 +912,12 @@
 
 <body>
 
-  <!-- PARTICLE CANVAS -->
-  <canvas id="particle-canvas"></canvas>
+  <!-- AURORA BACKGROUND -->
+  <div class="aurora">
+    <div class="aurora-blob aurora-blob-1"></div>
+    <div class="aurora-blob aurora-blob-2"></div>
+    <div class="aurora-blob aurora-blob-3"></div>
+  </div>
 
   <nav id="navbar">
     <div class="logo">S. Ingole</div>
@@ -940,7 +994,6 @@
         <span class="tool-pill"><i class="fa-solid fa-plane-up"></i> Aerospace NDT</span>
         <span class="tool-pill"><i class="fa-solid fa-fire"></i> Heat Treatment</span>
         <span class="tool-pill"><i class="fa-solid fa-robot"></i> OpenCV</span>
-        <!-- duplicate for seamless loop -->
         <span class="tool-pill"><i class="fa-solid fa-cube"></i> FreeCAD</span>
         <span class="tool-pill"><i class="fa-solid fa-cube"></i> SolidWorks</span>
         <span class="tool-pill"><i class="fa-solid fa-drafting-compass"></i> AutoCAD</span>
@@ -975,7 +1028,7 @@
                 <span class="chip c-steel">Groove</span>
                 <span class="chip c-steel">Pocket</span>
               </div>
-              <a href="https://github.com/shrutikaingole15/CAD-portfolio/tree/main/01_sketched-solid" target="_blank" style="font-size:0.75rem;color:var(--cyan);text-decoration:none;opacity:0.7;">
+              <a href="https://github.com/shrutikaingole15/CAD-portfolio/tree/main/01_sketched-solid" target="_blank" style="font-size:0.75rem;color:var(--purple);text-decoration:none;opacity:0.7;">
                 <i class="fa-brands fa-github"></i> View on GitHub
               </a>
             </div>
@@ -995,7 +1048,7 @@
                 <span class="chip c-steel">Fillet</span>
                 <span class="chip c-steel">SubtractiveCylinder</span>
               </div>
-              <a href="https://github.com/shrutikaingole15/CAD-portfolio/tree/main/02_multifeature-block" target="_blank" style="font-size:0.75rem;color:var(--cyan);text-decoration:none;opacity:0.7;">
+              <a href="https://github.com/shrutikaingole15/CAD-portfolio/tree/main/02_multifeature-block" target="_blank" style="font-size:0.75rem;color:var(--purple);text-decoration:none;opacity:0.7;">
                 <i class="fa-brands fa-github"></i> View on GitHub
               </a>
             </div>
@@ -1014,7 +1067,7 @@
                 <span class="chip c-steel">Revolution</span>
                 <span class="chip c-steel">Pocket</span>
               </div>
-              <a href="https://github.com/shrutikaingole15/CAD-portfolio/tree/main/03_revolved-part" target="_blank" style="font-size:0.75rem;color:var(--cyan);text-decoration:none;opacity:0.7;">
+              <a href="https://github.com/shrutikaingole15/CAD-portfolio/tree/main/03_revolved-part" target="_blank" style="font-size:0.75rem;color:var(--purple);text-decoration:none;opacity:0.7;">
                 <i class="fa-brands fa-github"></i> View on GitHub
               </a>
             </div>
@@ -1105,12 +1158,10 @@
 
         <div class="edu-timeline">
 
-          <!-- vertical track -->
           <div class="edu-track">
             <div class="edu-track-fill" id="eduTrackFill"></div>
           </div>
 
-          <!-- IITB -->
           <div class="edu-item" data-index="0">
             <div class="edu-dot">
               <div class="edu-dot-ring"></div>
@@ -1124,7 +1175,6 @@
             </div>
           </div>
 
-          <!-- SVNIT -->
           <div class="edu-item" data-index="1">
             <div class="edu-dot">
               <div class="edu-dot-ring"></div>
@@ -1139,7 +1189,6 @@
             </div>
           </div>
 
-          <!-- IITM -->
           <div class="edu-item" data-index="2">
             <div class="edu-dot">
               <div class="edu-dot-ring"></div>
@@ -1318,76 +1367,6 @@
   </footer>
 
   <script>
-    // ── PARTICLE BACKGROUND ──
-    const canvas = document.getElementById('particle-canvas');
-    const ctx    = canvas.getContext('2d');
-    let W, H, particles = [];
-
-    function resize() {
-      W = canvas.width  = window.innerWidth;
-      H = canvas.height = window.innerHeight;
-    }
-
-    class Particle {
-      constructor() { this.reset(); }
-      reset() {
-        this.x  = Math.random() * W;
-        this.y  = Math.random() * H;
-        this.vx = (Math.random() - 0.5) * 0.3;
-        this.vy = (Math.random() - 0.5) * 0.3;
-        this.r  = Math.random() * 1.2 + 0.3;
-        this.a  = Math.random() * 0.5 + 0.1;
-      }
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
-      }
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0,200,255,${this.a})`;
-        ctx.fill();
-      }
-    }
-
-    function initParticles() {
-      particles = [];
-      const count = Math.floor((W * H) / 14000);
-      for (let i = 0; i < count; i++) particles.push(new Particle());
-    }
-
-    function drawLines() {
-      const dist = 130;
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const d  = Math.sqrt(dx*dx + dy*dy);
-          if (d < dist) {
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(0,200,255,${0.12 * (1 - d / dist)})`;
-            ctx.lineWidth   = 0.5;
-            ctx.stroke();
-          }
-        }
-      }
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, W, H);
-      particles.forEach(p => { p.update(); p.draw(); });
-      drawLines();
-      requestAnimationFrame(animate);
-    }
-
-    resize();
-    initParticles();
-    animate();
-    window.addEventListener('resize', () => { resize(); initParticles(); });
-
     // ── SCROLL REVEAL ──
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => {
@@ -1438,11 +1417,9 @@
       const trackH     = trackRect.height;
       const viewH      = window.innerHeight;
 
-      // how far the track has entered the viewport (0 → 1)
       const progress = Math.min(1, Math.max(0, (viewH - trackTop) / (viewH + trackH)));
       trackFill.style.height = (progress * 100) + '%';
 
-      // activate each dot when the card centre crosses 75% down viewport
       eduItems.forEach(item => {
         const rect = item.getBoundingClientRect();
         const mid  = rect.top + rect.height / 2;
